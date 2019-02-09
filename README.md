@@ -1,0 +1,2 @@
+# AirReserve2LineGroup
+Airリザーブの予約・キャンセルをLINEグループに通知する
