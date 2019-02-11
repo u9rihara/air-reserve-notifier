@@ -1,0 +1,20 @@
+{
+  "name": "air-reserve-2-line-group",
+  "version": "1.0.0",
+  "description": "Airリザーブの予約・キャンセルをLINEグループに通知する",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/u9rihara/AirReserve2LineGroup.git"
+  },
+  "keywords": [],
+  "author": "u9rihara",
+  "license": "MIT License",
+  "bugs": {
+    "url": "https://github.com/u9rihara/AirReserve2LineGroup/issues"
+  },
+  "homepage": "https://github.com/u9rihara/AirReserve2LineGroup#readme"
+}
