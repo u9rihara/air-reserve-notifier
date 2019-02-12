@@ -1,2 +1,2 @@
-# AirReserve2LineGroup
-Airリザーブの予約・キャンセルをLINEグループに通知する
+# air-reserve-notifier
+Airリザーブの予約・キャンセルをLINEグループなどに通知する
