@@ -17,7 +17,10 @@ function addTest() {
   ].join("\n");
   var data = analyzeReserveMessage(text);
   data['予約受付日時'] = '2019/01/01 00:00:00';
-  addRow(data);
+  // addRow(data);
+  var message = buildLineText(data, true);
+  // Logger.log(message);
+  notifyLine(message);
 }
 
 function cancelTest() {
@@ -34,6 +37,10 @@ function cancelTest() {
     "■メールアドレス：tanaka@hogehoge.jp",
     "■電話番号：09012345678"
   ].join("\n");
-  var rsv_id = analyzeCancelMessage(text);
+  var data = analyzeReserveMessage(text);
+  var rsv_id = data['予約番号'];
   deactivateRow(rsv_id);
+  var message = buildLineText(data, false);
+  // Logger.log(message);
+  notifyLine(message);
 }

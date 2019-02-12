@@ -18,12 +18,7 @@ function setStore(key, value) {
  * @return {object} 予約データオブジェクト
  */
 function analyzeReserveMessage(target_text) {
-  var rsv_data = {
-    名前: '',
-    フリガナ: '',
-    利用日: '',
-    利用時間: ''
-  };
+  var rsv_data = {};
   target_text.replace(/^■(.+?)：(.+)$/gm, function(match, p1, p2) {
     switch (p1) {
       case '利用日時':
@@ -33,13 +28,13 @@ function analyzeReserveMessage(target_text) {
         });
         break;
       case '名前（姓）':
-        rsv_data['名前'] += p2;
+        rsv_data['名前'] = p2;
         break;
       case '名前（名）':
         rsv_data['名前'] += '　' + p2;
         break;
       case 'フリガナ（セイ）':
-        rsv_data['フリガナ'] += p2;
+        rsv_data['フリガナ'] = p2;
         break;
       case 'フリガナ（メイ）':
         rsv_data['フリガナ'] += '　' + p2;
@@ -50,19 +45,4 @@ function analyzeReserveMessage(target_text) {
     }
   });
   return rsv_data;
-}
-
-/**
- * キャンセルメッセージメッセージ解析
- * @param {string} target_text 解析対象の文章
- * @return {string} 予約番号
- */
-function analyzeCancelMessage(target_text) {
-  var rsv_id = '';
-  target_text.replace(/^■(.+?)：(.+)$/gm, function (match, p1, p2) {
-    if (p1 === '予約番号') {
-      rsv_id = p2;
-    }
-  });
-  return rsv_id;
 }
