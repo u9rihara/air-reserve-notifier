@@ -1,48 +1,27 @@
 function main() {
+  var mails = checkNewMail();
+  var rsv_len = mails.reserve.length;
+  var can_len = mails.cancel.length;
+  var body, data, lineMsg;
 
-}
-
-function getStore(key) {
-  var properties = PropertiesService.getScriptProperties();
-  return properties.getProperty(key);
-}
-
-function setStore(key, value) {
-  var properties = PropertiesService.getScriptProperties();
-  return properties.setProperty(key, value);
-}
-
-/**
- * 予約メッセージ解析
- * @param {string} target_text 解析対象の文章
- * @return {object} 予約データオブジェクト
- */
-function analyzeReserveMessage(target_text) {
-  var rsv_data = {};
-  target_text.replace(/^■(.+?)：(.+)$/gm, function(match, p1, p2) {
-    switch (p1) {
-      case '利用日時':
-        p2.replace(/(\d{4}\/\d{2}\/\d{2})\(.+\) (\d{2}:\d{2})/, function(match2, pp1, pp2) {
-          rsv_data['利用日'] = pp1;
-          rsv_data['利用時間'] = pp2;
-        });
-        break;
-      case '名前（姓）':
-        rsv_data['名前'] = p2;
-        break;
-      case '名前（名）':
-        rsv_data['名前'] += '　' + p2;
-        break;
-      case 'フリガナ（セイ）':
-        rsv_data['フリガナ'] = p2;
-        break;
-      case 'フリガナ（メイ）':
-        rsv_data['フリガナ'] += '　' + p2;
-        break;
-      default:
-        rsv_data[p1] = p2;
-        break;
+  if (rsv_len) {
+    for (var i = 0; i < rsv_len; i++) {
+      body = pullDataText(mails.reserve[i].body, 'reserve');
+      data = analyzeReserveMessage(body);
+      data['予約受付日時'] = mails.reserve[i].date;
+      addRow(data);
+      lineMsg = buildLineText(data, 'reserve');
+      notifyLine(lineMsg);
     }
-  });
-  return rsv_data;
+  }
+
+  if (can_len) {
+    for (var i = 0; i < can_len; i++) {
+      body = pullDataText(mails.cancel[i].body, 'cancel');
+      data = analyzeReserveMessage(body);
+      deactivateRow(data['予約番号']);
+      lineMsg = buildLineText(data, 'cancel');
+      notifyLine(lineMsg);
+    }
+  }
 }

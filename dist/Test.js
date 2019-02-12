@@ -1,6 +1,24 @@
 // Logger.log();
 // console.log();
 
+function checkTest() {
+  var mails = checkNewMail();
+  var rsv_len = mails.reserve.length;
+  var can_len = mails.cancel.length;
+  if (rsv_len) {
+    for (var i = 0; i < rsv_len; i++) {
+      mails.reserve[i].body = pullDataText(mails.reserve[i].body, 'reserve');
+    }
+  }
+  console.log(mails.reserve);
+  if (can_len) {
+    for (var i = 0; i < can_len; i++) {
+      mails.cancel[i].body = pullDataText(mails.cancel[i].body, 'cancel');
+    }
+  }
+  console.log(mails.cancel);
+}
+
 function addTest() {
   var text = [
     "【ご予約内容】",
@@ -18,7 +36,7 @@ function addTest() {
   var data = analyzeReserveMessage(text);
   data['予約受付日時'] = '2019/01/01 00:00:00';
   // addRow(data);
-  var message = buildLineText(data, true);
+  var message = buildLineText(data, 'reserve');
   // Logger.log(message);
   notifyLine(message);
 }
@@ -40,7 +58,7 @@ function cancelTest() {
   var data = analyzeReserveMessage(text);
   var rsv_id = data['予約番号'];
   deactivateRow(rsv_id);
-  var message = buildLineText(data, false);
+  var message = buildLineText(data, 'cancel');
   // Logger.log(message);
   notifyLine(message);
 }
