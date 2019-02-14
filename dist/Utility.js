@@ -4,8 +4,7 @@
  * @return {string} YYYY/MM/DD HH:MM:SS
  */
 function formatDate(datetime) {
-  datetime = datetime || '';
-  var now = new Date(datetime);
+  var now = datetime ? new Date(datetime) : new Date();
   var dateText = now.getFullYear() + '/';
   dateText += ('0' + (now.getMonth() + 1)).slice(-2) + '/';
   dateText += ('0' + now.getDate()).slice(-2) + ' ';

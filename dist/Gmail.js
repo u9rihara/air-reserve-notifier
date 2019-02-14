@@ -1,30 +1,45 @@
 /**
  * 新着メール確認
- * アーカイブされていないメールを新着として扱う
- * @return {object} 受信メールデータ
+ * アーカイブされていないスレッド内にある、
+ * 受信日時が「GMAIL_LAST_CHECK」以降のメッセージ取得する
+ * @return {Object} 受信メールデータ
  */
 function checkNewMail() {
-  var query = 'label:inbox from:(reservation@airreserve.net|reservation_cancel@airreserve.net)';
-  var threads = GmailApp.search(query, 0, 30);
-  var messages = GmailApp.getMessagesForThreads(threads);
-  var mails = {
+  var last_check = new Date(getStore('GMAIL_LAST_CHECK'));
+  var mailData = {
     reserve: [],
     cancel: []
   };
-  for (var i = 0; i < messages.length; i++) {
-    var from = messages[i][0].getFrom();
-    var data = {
-      date: formatDate(messages[i][0].getDate()),
-      body: messages[i][0].getPlainBody()
-    };
-    if (from == 'reservation@airreserve.net') {
-      mails.reserve.push(data);
-    } else {
-      mails.cancel.push(data);
+
+  var query = 'label:inbox from:(reservation@airreserve.net|reservation_cancel@airreserve.net)';
+  var threads = GmailApp.search(query, 0, 30);
+  setStore('GMAIL_LAST_CHECK', formatDate()); // 最終チェック日時のアップデート
+  var messages = GmailApp.getMessagesForThreads(threads);
+
+  for (var i = messages.length - 1; i >= 0; i--) { // スレッド古い順（日跨ぎでスレッド分かれる？対策）
+    for (var j = 0; j < messages[i].length; j++) { // メッセージ新しい順
+      var msg = messages[i][j];
+      var date = msg.getDate();
+      var from = msg.getFrom();
+      if (date > last_check) {
+        var row = {};
+        switch (from) {
+          case 'reservation@airreserve.net':
+            row = analyzeReserveMessage(pullDataText(msg.getPlainBody(), 'reserve'));
+            row['予約受付日時'] = formatDate(msg.getDate());
+            mailData.reserve.push(row);
+            break;
+          case 'reservation_cancel@airreserve.net':
+            row = analyzeReserveMessage(pullDataText(msg.getPlainBody(), 'cancel'));
+            mailData.cancel.push(row);
+            break;
+        }
+      }
     }
   }
+
   GmailApp.moveThreadsToArchive(threads);
-  return mails;
+  return mailData;
 }
 
 /**
@@ -41,7 +56,7 @@ function pullDataText(bodytext, type) {
   if (typeof regExp[type] === 'undefined') {
     return null;
   }
-  var result = regExp[type].exec(bodytext);
+  var result = bodytext.match(regExp[type]);
   return (result === null) ? null : result[0];
 }
 

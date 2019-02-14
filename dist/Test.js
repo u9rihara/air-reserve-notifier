@@ -2,21 +2,12 @@
 // console.log();
 
 function checkTest() {
-  var mails = checkNewMail();
-  var rsv_len = mails.reserve.length;
-  var can_len = mails.cancel.length;
-  if (rsv_len) {
-    for (var i = 0; i < rsv_len; i++) {
-      mails.reserve[i].body = pullDataText(mails.reserve[i].body, 'reserve');
-    }
+  try {
+    var mails = checkNewMail();
+    console.log(mails);
+  } catch (error) {
+    console.error(error);
   }
-  console.log(mails.reserve);
-  if (can_len) {
-    for (var i = 0; i < can_len; i++) {
-      mails.cancel[i].body = pullDataText(mails.cancel[i].body, 'cancel');
-    }
-  }
-  console.log(mails.cancel);
 }
 
 function addTest() {
